@@ -51,4 +51,10 @@ usuarioSchema.methods.matchPassword = async function(password){
     return response
 }
 
+// Método para crear un token 
+usuarioSchema.methods.crearToken = function(){
+    const tokenGenerado = this.token = Math.random().toString(36).slice(2)
+    return tokenGenerado
+}
+
 export default model('Usuario',usuarioSchema)
