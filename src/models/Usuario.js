@@ -22,9 +22,17 @@ const usuarioSchema = new Schema({
         type:String,
         require:true
     },
+    status:{
+        type:Boolean,
+        default:true
+    },
     token:{
         type:String,
         default:null
+    },
+    confirmEmail:{
+        type:Boolean,
+        default:false
     }
 },{
     timestamps:true
