@@ -57,7 +57,7 @@ const registro =async (req,res)=>{
     nuevoUsuario.password = await nuevoUsuario.encrypPassword(password)
 
     const token = nuevoUsuario.crearToken()
-    await sendMailToUser(email,token)
+    sendMailToUser(email, token)
     nuevoUsuario.username = username
     await nuevoUsuario.save()
     res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
