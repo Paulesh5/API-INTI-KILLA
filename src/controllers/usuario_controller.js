@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 import { sendMailToUser, sendMailToRecoveryPassword } from "../config/nodemailer.js"
 
 const login = async(req,res)=>{
-    const {email,password} = req.body
+    const {username,password} = req.body
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
-    const usuarioBDD = await Usuario.findOne({email}).select("-status -__v -token -updatedAt -createdAt")
+    const usuarioBDD = await Usuario.findOne({username}).select("-status -__v -token -updatedAt -createdAt")
     if(usuarioBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
     if(!usuarioBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
     const verificarPassword = await usuarioBDD.matchPassword(password)
@@ -17,6 +17,7 @@ const login = async(req,res)=>{
         token,
         nombre,
         apellido,
+        username,
         _id,
         email:usuarioBDD.email
     })
@@ -33,13 +34,23 @@ const perfil =(req,res)=>{
 
 const registro =async (req,res)=>{
     // Desestructura los campos
-    const {email,password} = req.body
+    const {email,password,nombre,apellido} = req.body
     // Validar todos los campos llenos
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
     // Obtener el usuario de la BDD en base al email
     const verificarEmailBDD = await Usuario.findOne({email})
     // Validar que el email sea nuevo
     if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
+    // Generar nombre de usuario    
+    const username = nombre.charAt(0).toUpperCase() + apellido.toUpperCase();
+    // Agregar un numero aleatorio de dos digitos al final si el nombre de usuario ya existe
+    const usuarioExistente = await Usuario.findOne({username});
+    const numAleatorio = Math.floor(Math.random() * 90) + 10; // Genera un número aleatorio de dos dígitos
+    while (usuarioExistente) {
+        username = username + numAleatorio;
+        usuarioExistente = await Usuario.findOne({username});
+        numAleatorio = Math.floor(Math.random() * 90) + 10;
+    }
     // Crear una instancia del Usuario
     const nuevoUsuario = new Usuario(req.body)
     // Encriptar el password
@@ -47,24 +58,21 @@ const registro =async (req,res)=>{
 
     const token = nuevoUsuario.crearToken()
     await sendMailToUser(email,token)
+    nuevoUsuario.username = username
     await nuevoUsuario.save()
     res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
-
-    /*
-    // Guardar en base de datos
-    await nuevoUsuario.save()
-    // Responder
-    res.status(200).json({msg:"Usuario registrado"})*/
 }
 
 const confirmEmail = async (req,res)=>{
     if(!(req.params.token)) return res.status(400).json({msg:"Lo sentimos, no se puede validar la cuenta"})
     const usuarioBDD = await Usuario.findOne({token:req.params.token})
     if(!usuarioBDD?.token) return res.status(404).json({msg:"La cuenta ya ha sido confirmada"})
+    // Obtener el nombre de usuario registrado
+    const username = usuarioBDD.username;
     usuarioBDD.token = null
     usuarioBDD.confirmEmail=true
     await usuarioBDD.save()
-    res.status(200).json({msg:"Token confirmado, ya puedes iniciar sesión"}) 
+    res.status(200).json({msg:"Correo confirmado, ya puedes iniciar sesión con el usuario:", username}) 
 }
 
 const detalleUsuario = async(req,res)=>{

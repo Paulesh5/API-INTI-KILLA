@@ -22,6 +22,10 @@ const usuarioSchema = new Schema({
         type:String,
         require:true
     },
+    username:{
+        type:String,
+        default:null
+    },
     status:{
         type:Boolean,
         default:true

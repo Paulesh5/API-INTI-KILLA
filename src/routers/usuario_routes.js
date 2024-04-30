@@ -30,10 +30,10 @@ router.post("/nuevo-password/:token", nuevoPassword);
 
 router.get("/perfil", verificarAutenticacion, perfil)
 
-router.put('/veterinario/actualizarpassword', verificarAutenticacion, actualizarPassword)
+router.put('/usuario/actualizarpassword', verificarAutenticacion, actualizarPassword)
 
 router.get('/usuario/:id', verificarAutenticacion, detalleUsuario)
 
-router.put("/veterinario/:id", verificarAutenticacion, actualizarPerfil);
+router.put("/usuario/:id", verificarAutenticacion, actualizarPerfil);
 
 export default router

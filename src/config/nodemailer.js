@@ -43,17 +43,15 @@ const sendMailToUser = (userMail, token) => {
 };
 
 const sendMailToRecoveryPassword = async(userMail,token)=>{
+
+    const htmlVerificar = fs.readFileSync('src/config/restablecer_password.html', 'utf8');
+    const preparedHTML = prepareHTML(htmlVerificar, token);
+
     let info = await transporter.sendMail({
-    from: 'admin@admin.com',
+    from: process.env.USER_MAILTRA,
     to: userMail,
     subject: "Correo para reestablecer tu contraseña",
-    html: `
-    <h1>Sistema de gestión (INTI-KILLA)</h1>
-    <hr>
-    <a href=${process.env.URL_BACKEND}recuperar-password/${token}>Clic para reestablecer tu contraseña</a>
-    <hr>
-    <footer>Bienvenido usuario</footer>
-    `
+    html: preparedHTML
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
