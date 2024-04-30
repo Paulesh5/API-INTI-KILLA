@@ -21,7 +21,7 @@ let transporter = nodemailer.createTransport({
 
 const sendMailToUser = (userMail, token) => {
 
-    const htmlVerificar = fs.readFileSync('./verificar_cuenta.html', 'utf8');
+    const htmlVerificar = fs.readFileSync('src/config/verificar_cuenta.html', 'utf8');
     const preparedHTML = prepareHTML(htmlVerificar, token);
 
     let mailOptions = {
@@ -44,7 +44,7 @@ const sendMailToUser = (userMail, token) => {
 
 const sendMailToRecoveryPassword = async(userMail,token)=>{
 
-    const htmlVerificar = fs.readFileSync('./restablecer_password.html', 'utf8');
+    const htmlVerificar = fs.readFileSync('src/config/restablecer_password.html', 'utf8');
     const preparedHTML = prepareHTML(htmlVerificar, token);
 
     let info = await transporter.sendMail({
