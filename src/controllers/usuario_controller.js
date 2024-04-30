@@ -42,14 +42,14 @@ const registro =async (req,res)=>{
     // Validar que el email sea nuevo
     if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
     // Generar nombre de usuario    
-    const username = nombre.charAt(0).toUpperCase() + apellido.toUpperCase();
+    let username = nombre.charAt(0).toUpperCase() + apellido.toUpperCase();
     // Agregar un numero aleatorio de dos digitos al final si el nombre de usuario ya existe
-    const usuarioExistente = await Usuario.findOne({username});
-    const numAleatorio = Math.floor(Math.random() * 90) + 10; // Genera un número aleatorio de dos dígitos
+    let usuarioExistente = await Usuario.findOne({username});
+    let numAleatorio = Math.floor(Math.random() * 90) // Genera un número aleatorio de dos dígitos
     while (usuarioExistente) {
         username = username + numAleatorio;
         usuarioExistente = await Usuario.findOne({username});
-        numAleatorio = Math.floor(Math.random() * 90) + 10;
+        numAleatorio = Math.floor(Math.random() * 90);
     }
     // Crear una instancia del Usuario
     const nuevoUsuario = new Usuario(req.body)

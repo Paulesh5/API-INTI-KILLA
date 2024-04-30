@@ -30,7 +30,7 @@ const sendMailToUser = (userMail, token) => {
     const preparedHTML = prepareHTML(htmlVerificar, token);
 
     let mailOptions = {
-        from: process.env.USER_MAILTRAP,
+        from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
         to: userMail,
         subject: "Verifica tu cuenta",
         html: preparedHTML
@@ -53,7 +53,7 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
     const preparedHTMLPassword = prepareHTMLPassword(htmlRestablecer, token);
 
     let info = await transporter.sendMail({
-    from: process.env.USER_MAILTRA,
+    from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
     to: userMail,
     subject: "Correo para reestablecer tu contraseña",
     html: preparedHTMLPassword
