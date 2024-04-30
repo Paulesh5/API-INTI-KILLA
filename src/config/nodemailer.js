@@ -9,6 +9,11 @@ const prepareHTML = (htmlContent, token) => {
     return htmlContent.replace('${process.env.URL_BACKEND}confirmar/${encodeURIComponent(token)}', `${urlBackend}confirmar/${encodeURIComponent(token)}`);
 };
 
+const prepareHTMLPassword = (htmlContent, token) => {
+    const urlBackend = process.env.URL_BACKEND;
+    return htmlContent.replace('${process.env.URL_BACKEND}recuperar-password/${encodeURIComponent(token)}', `${urlBackend}recuperar-password/${encodeURIComponent(token)}`);
+};
+
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     host: process.env.HOST_MAILTRAP,
@@ -44,14 +49,14 @@ const sendMailToUser = (userMail, token) => {
 
 const sendMailToRecoveryPassword = async(userMail,token)=>{
 
-    const htmlVerificar = fs.readFileSync('src/config/restablecer_password.html', 'utf8');
-    const preparedHTML = prepareHTML(htmlVerificar, token);
+    const htmlRestablecer = fs.readFileSync('src/config/restablecer_password.html', 'utf8');
+    const preparedHTMLPassword = prepareHTMLPassword(htmlRestablecer, token);
 
     let info = await transporter.sendMail({
     from: process.env.USER_MAILTRA,
     to: userMail,
     subject: "Correo para reestablecer tu contraseña",
-    html: preparedHTML
+    html: preparedHTMLPassword
     });
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
