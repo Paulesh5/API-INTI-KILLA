@@ -18,7 +18,7 @@ import{
 
 router.post("/login", login)
 
-router.post("/registro", validacionUsuario, registro)
+router.post("/registro", registro)
 
 router.get("/confirmar/:token", confirmEmail);
 
