@@ -1,7 +1,7 @@
 import Usuario from "../models/Usuario.js";
 import generarJWT from "../helpers/crearJWT.js"
 import mongoose from "mongoose";
-import { sendMailToUser, sendMailToRecoveryPassword } from "../config/nodemailer.js"
+import { sendMailToUser, sendMailToRecoveryPassword, sendMailToRecoveryUsername } from "../config/nodemailer.js"
 
 const login = async(req,res)=>{
     const {username,password} = req.body
@@ -119,6 +119,15 @@ const nuevoPassword = async (req,res)=>{
     res.status(200).json({msg:"Felicitaciones, ya puedes iniciar sesión con tu nuevo password"}) 
 }
 
+const recuperarUsername = async(req,res)=>{
+    const {email} = req.body
+    if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
+    const usuarioBDD = await Usuario.findOne({email})
+    if(!usuarioBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
+    await sendMailToRecoveryUsername(usuarioBDD.username, email)
+    res.status(200).json({msg:"Revisa tu correo electrónico para recuperar tu nombre de usuario"})
+}
+
 const actualizarPerfil = async (req,res)=>{
     const {id} = req.params
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, debe ser un id válido`});
@@ -136,6 +145,7 @@ const actualizarPerfil = async (req,res)=>{
 		usuarioBDD.nombre = req.body.nombre || usuarioBDD?.nombre
     usuarioBDD.apellido = req.body.apellido  || usuarioBDD?.apellido
     usuarioBDD.email = req.body.email || usuarioBDD?.email
+    usuarioBDD.username = req.body.username || usuarioBDD?.username
     await usuarioBDD.save()
     res.status(200).json({msg:"Perfil actualizado correctamente"})
 }
@@ -148,6 +158,7 @@ export{
     detalleUsuario,
     actualizarPassword,
     recuperarPassword,
+    recuperarUsername,
     comprobarTokenPasword,
     nuevoPassword,
     actualizarPerfil

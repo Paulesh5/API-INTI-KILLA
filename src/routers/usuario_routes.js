@@ -11,6 +11,7 @@ import{
     detalleUsuario,
     actualizarPassword,
     recuperarPassword,
+    recuperarUsername,
     comprobarTokenPasword,
     nuevoPassword,
     actualizarPerfil
@@ -23,6 +24,8 @@ router.post("/registro", validacionUsuario, registro)
 router.get("/confirmar/:token", confirmEmail);
 
 router.get("/recuperar-password", recuperarPassword);
+
+router.get("/recuperar-username", recuperarUsername);
 
 router.get("/recuperar-password/:token", comprobarTokenPasword);
 

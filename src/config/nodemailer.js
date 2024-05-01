@@ -14,6 +14,10 @@ const prepareHTMLPassword = (htmlContent, token) => {
     return htmlContent.replace('${process.env.URL_BACKEND}recuperar-password/${encodeURIComponent(token)}', `${urlBackend}recuperar-password/${encodeURIComponent(token)}`);
 };
 
+const prepareHTMLUsername = (htmlContent, username) => {
+    return htmlContent.replace('${username}', username);
+};
+
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     host: process.env.HOST_MAILTRAP,
@@ -61,9 +65,23 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
+// Función para enviar correo electrónico de recuperacion de username
+const sendMailToRecoveryUsername = async(username, userMail) => {
+    const htmlRecuperarUsuario = fs.readFileSync('src/config/recuperar_username.html', 'utf8');
+    const preparedHTMLUsername = prepareHTMLUsername(htmlRecuperarUsuario, username);
+
+    let info = await transporter.sendMail({
+        from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
+        to: userMail,
+        subject: "Recuperación de nombre de usuario",
+        html: preparedHTMLUsername
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
 
 
 export {
     sendMailToUser,
-    sendMailToRecoveryPassword
+    sendMailToRecoveryPassword,
+    sendMailToRecoveryUsername
 }
