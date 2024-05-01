@@ -34,23 +34,17 @@ const perfil =(req,res)=>{
 
 const registro =async (req,res)=>{
     // Desestructura los campos
-    const {email,password,nombre,apellido} = req.body
+    const {email,password,username} = req.body
     // Validar todos los campos llenos
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
     // Obtener el usuario de la BDD en base al email
     const verificarEmailBDD = await Usuario.findOne({email})
     // Validar que el email sea nuevo
     if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
-    // Generar nombre de usuario    
-    let username = nombre.charAt(0).toUpperCase() + apellido.toUpperCase();
-    // Agregar un numero aleatorio de dos digitos al final si el nombre de usuario ya existe
-    let usuarioExistente = await Usuario.findOne({username});
-    let numAleatorio = Math.floor(Math.random() * 90) // Genera un número aleatorio de dos dígitos
-    while (usuarioExistente) {
-        username = username + numAleatorio;
-        usuarioExistente = await Usuario.findOne({username});
-        numAleatorio = Math.floor(Math.random() * 90);
-    }
+    // Obtener el usuario de la BDD en base al nombre de usuario
+    const verificarUsernameBDD = await Usuario.findOne({username})
+    // Validar que el nombre de usuario sea nuevo
+    if(verificarUsernameBDD) return res.status(400).json({msg:"Lo sentimos, el nombre de usuario ya se encuentra registrado"})
     // Crear una instancia del Usuario
     const nuevoUsuario = new Usuario(req.body)
     // Encriptar el password
@@ -58,7 +52,6 @@ const registro =async (req,res)=>{
 
     const token = nuevoUsuario.crearToken()
     await sendMailToUser(email,token)
-    nuevoUsuario.username = username
     await nuevoUsuario.save()
     res.status(200).json({msg:"Revisa tu correo electrónico para confirmar tu cuenta"})
 }

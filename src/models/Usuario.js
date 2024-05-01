@@ -20,11 +20,14 @@ const usuarioSchema = new Schema({
     },
     password:{
         type:String,
-        require:true
+        require:true,
+        trim:true
     },
     username:{
         type:String,
-        default:null
+        require:true,
+        trim:true,
+        unique:true
     },
     status:{
         type:Boolean,
