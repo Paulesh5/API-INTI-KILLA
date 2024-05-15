@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recupera tu usuario</title>
+    <title>Verificar cuenta</title>
     <style>
         body {
             margin: 0;
@@ -58,12 +58,16 @@
             <img src="https://res.cloudinary.com/dtlumnzvm/image/upload/v1714571591/INTI-KILLA/tqdtnuklgsiruyidusok.png" alt="INTI-KILLA">
         </div>
         <div class="mensaje">
-            <h1>Recupera tu usuario</h1>
+            <h1>Verifica tu correo electrónico</h1>
             <p class="texto">
-                Hola apreciado administrador. 
-                Tu nombre de usuario para ingresar al sistema es:
+                Hola apreciado Empleado. 
+                Para poder tener acceso completo al sistema de 
+                INTI-KILLA, es necesaria la comprobación de tu correo.
+                Presiona en el botón de abajo para completar con el registro de tu 
+                cuenta como empleado
             </p>
-            <h3>${username}</h3>
+            <br>
+            <a href="${process.env.URL_BACKEND}empleado/confirmar/${encodeURIComponent(token)}" class="verificar-btn">Verificar cuenta</a>
         </div>
     </div>
 </body>

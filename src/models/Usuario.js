@@ -29,6 +29,10 @@ const usuarioSchema = new Schema({
         trim:true,
         unique:true
     },
+    rol:{
+        type:String,
+        default: "usuario"
+    },
     status:{
         type:Boolean,
         default:true

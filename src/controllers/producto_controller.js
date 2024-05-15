@@ -8,13 +8,15 @@ const infoProducto =(req,res)=>{
     res.status(200).json(req.productoBDD)
 }
 const listarProductos = async (req,res)=>{
-    const productos = await Producto.find({estado:true}).where('producto').equals(req.productoBDD).select("-createdAt -updatedAt -__v").populate('_id codigo nombre precio_unitario cantidad')
+    //const productos = await Producto.find({estado:true}).where('producto').equals(req.productoBDD).select("-createdAt -updatedAt -__v").populate('_id codigo nombre precio_unitario cantidad')
+    const productos = await Producto.find().select("-createdAt -updatedAt -__v");
     res.status(200).json(productos)
 }
 const detalleProducto = async(req,res)=>{
     const {id} = req.params
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el Producto ${id}`});
-    const producto = await Producto.findById(id).select("-createdAt -updatedAt -__v").populate('_id codigo nombre precio_unitario cantidad')
+    //const producto = await Producto.findById(id).select("-createdAt -updatedAt -__v").populate('_id codigo nombre precio_unitario cantidad')
+    const producto = await Producto.findById(id).select("-createdAt -updatedAt -__v")
     res.status(200).json(producto)
 }
 const registrarProducto = async(req,res)=>{

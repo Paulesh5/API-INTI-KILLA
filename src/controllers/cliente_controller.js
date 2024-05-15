@@ -8,13 +8,15 @@ const perfilCliente =(req,res)=>{
     res.status(200).json(req.clienteBDD)
 }
 const listarClientes = async (req,res)=>{
-    const clientes = await Cliente.find({estado:true}).where('cliente').equals(req.clienteBDD).select("-createdAt -updatedAt -__v").populate('_id nombre cedula telefono direccion email')
+    //const clientes = await Cliente.find({estado:true}).where('cliente').equals(req.clienteBDD).select("-createdAt -updatedAt -__v").populate('_id nombre cedula telefono direccion email')
+    const clientes = await Cliente.find().select("-createdAt -updatedAt -__v");
     res.status(200).json(clientes)
 }
 const detalleCliente = async(req,res)=>{
     const {id} = req.params
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el Cliente ${id}`});
-    const cliente = await Cliente.findById(id).select("-createdAt -updatedAt -__v").populate('_id nombre cedula telefono direccion email')
+    //const cliente = await Cliente.findById(id).select("-createdAt -updatedAt -__v").populate('_id nombre cedula telefono direccion email')
+    const cliente = await Cliente.findById(id).select("-createdAt -updatedAt -__v")
     res.status(200).json(cliente)
 }
 const registrarCliente = async(req,res)=>{

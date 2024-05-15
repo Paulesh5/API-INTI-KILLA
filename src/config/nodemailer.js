@@ -9,9 +9,18 @@ const prepareHTML = (htmlContent, token) => {
     return htmlContent.replace('${process.env.URL_BACKEND}confirmar/${encodeURIComponent(token)}', `${urlBackend}confirmar/${encodeURIComponent(token)}`);
 };
 
+const prepareHTMLEmpleado = (htmlContent, token) => {
+    const urlBackend = process.env.URL_BACKEND;
+    return htmlContent.replace('${process.env.URL_BACKEND}empleado/confirmar/${encodeURIComponent(token)}', `${urlBackend}empleado/confirmar/${encodeURIComponent(token)}`);
+};
+
 const prepareHTMLPassword = (htmlContent, token) => {
     const urlBackend = process.env.URL_BACKEND;
     return htmlContent.replace('${process.env.URL_BACKEND}recuperar-password/${encodeURIComponent(token)}', `${urlBackend}recuperar-password/${encodeURIComponent(token)}`);
+};
+
+const prepareHTMLPasswordEmpleado = (htmlContent, token) => {
+    return htmlContent.replace('${token}', token);
 };
 
 const prepareHTMLUsername = (htmlContent, username) => {
@@ -79,9 +88,62 @@ const sendMailToRecoveryUsername = async(username, userMail) => {
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
+const sendMailToEmpleado = (userMail, token) => {
+
+    const htmlVerificar = fs.readFileSync('src/config/verificar_cuenta_empleado.html', 'utf8');
+    const preparedHTML = prepareHTMLEmpleado(htmlVerificar, token);
+
+    let mailOptions = {
+        from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
+        to: userMail,
+        subject: "Verifica tu cuenta",
+        html: preparedHTML
+    };
+    
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Correo enviado: ' + info.response);
+        }
+    });
+};
+
+const sendMailToRecoveryPasswordEmpleado = async(userMail,token)=>{
+
+    const htmlRestablecer = fs.readFileSync('src/config/restablecer_password_empleado.html', 'utf8');
+    const preparedHTMLPassword = prepareHTMLPasswordEmpleado(htmlRestablecer, token);
+
+    let info = await transporter.sendMail({
+    from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
+    to: userMail,
+    subject: "Correo para reestablecer tu contraseña",
+    html: preparedHTMLPassword
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+
+// Función para enviar correo electrónico de recuperacion de username
+const sendMailToRecoveryUsernameEmpleado = async(username, userMail) => {
+    const htmlRecuperarUsuario = fs.readFileSync('src/config/recuperar_username_empleado.html', 'utf8');
+    const preparedHTMLUsername = prepareHTMLUsername(htmlRecuperarUsuario, username);
+
+    let info = await transporter.sendMail({
+        from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
+        to: userMail,
+        subject: "Recuperación de nombre de usuario",
+        html: preparedHTMLUsername
+    });
+    console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
+}
+
 
 export {
     sendMailToUser,
     sendMailToRecoveryPassword,
-    sendMailToRecoveryUsername
+    sendMailToRecoveryUsername,
+    sendMailToEmpleado,
+    sendMailToRecoveryPasswordEmpleado,
+    sendMailToRecoveryUsernameEmpleado
 }
