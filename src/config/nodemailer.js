@@ -1,8 +1,6 @@
 import nodemailer from "nodemailer"
 import dotenv from 'dotenv'
 import fs from 'fs'
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 dotenv.config()
 
 // Función para preparar el HTML reemplazando la URL
@@ -92,10 +90,7 @@ const sendMailToRecoveryUsername = async(username, userMail) => {
 
 const sendMailToEmpleado = (userMail, token) => {
 
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = dirname(__filename);
-    const filePath = join(__dirname, 'verificar_cuenta_empleado.html');
-    const htmlVerificar = fs.readFileSync(filePath, 'utf8');
+    const htmlVerificar = fs.readFileSync('./public/verificar_cuenta_empleado.html', 'utf8');
     const preparedHTML = prepareHTMLEmpleado(htmlVerificar, token);
 
     let mailOptions = {
