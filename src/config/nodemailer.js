@@ -90,7 +90,7 @@ const sendMailToRecoveryUsername = async(username, userMail) => {
 
 const sendMailToEmpleado = (userMail, token) => {
 
-    const htmlVerificar = fs.readFileSync('./config/verificar_cuenta_empleado.html', 'utf8');
+    const htmlVerificar = fs.readFileSync('../config/verificar_cuenta_empleado.html', 'utf8');
     const preparedHTML = prepareHTMLEmpleado(htmlVerificar, token);
 
     let mailOptions = {
