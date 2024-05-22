@@ -41,7 +41,8 @@ let transporter = nodemailer.createTransport({
 
 const sendMailToUser = (userMail, token) => {
 
-    const htmlVerificar = fs.readFileSync('src/config/verificar_cuenta.html', 'utf8');
+    const __dirname = path.resolve()
+    const htmlVerificar = fs.readFileSync(path.join(__dirname,'src/config/verificar_cuenta.html'), 'utf8');
     const preparedHTML = prepareHTML(htmlVerificar, token);
 
     let mailOptions = {
@@ -64,7 +65,8 @@ const sendMailToUser = (userMail, token) => {
 
 const sendMailToRecoveryPassword = async(userMail,token)=>{
 
-    const htmlRestablecer = fs.readFileSync('src/config/restablecer_password.html', 'utf8');
+    const __dirname = path.resolve()
+    const htmlRestablecer = fs.readFileSync(path.join(__dirname,'src/config/restablecer_password.html'), 'utf8');
     const preparedHTMLPassword = prepareHTMLPassword(htmlRestablecer, token);
 
     let info = await transporter.sendMail({
@@ -78,7 +80,9 @@ const sendMailToRecoveryPassword = async(userMail,token)=>{
 
 // Función para enviar correo electrónico de recuperacion de username
 const sendMailToRecoveryUsername = async(username, userMail) => {
-    const htmlRecuperarUsuario = fs.readFileSync('src/config/recuperar_username.html', 'utf8');
+
+    const __dirname = path.resolve()
+    const htmlRecuperarUsuario = fs.readFileSync(path.join(__dirname,'src/config/recuperar_username.html'), 'utf8');
     const preparedHTMLUsername = prepareHTMLUsername(htmlRecuperarUsuario, username);
 
     let info = await transporter.sendMail({
@@ -93,7 +97,6 @@ const sendMailToRecoveryUsername = async(username, userMail) => {
 const sendMailToEmpleado = (userMail, token) => {
 
     const __dirname = path.resolve()
-    console.log(path.join(__dirname,'/src/config/verificar_cuenta_empleado.html'))
     const htmlVerificar = fs.readFileSync(path.join(__dirname,'/src/config/verificar_cuenta_empleado.html'), 'utf8');
     const preparedHTML = prepareHTMLEmpleado(htmlVerificar, token);
 
@@ -116,7 +119,8 @@ const sendMailToEmpleado = (userMail, token) => {
 
 const sendMailToRecoveryPasswordEmpleado = async(userMail,token)=>{
 
-    const htmlRestablecer = fs.readFileSync('src/config/restablecer_password_empleado.html', 'utf8');
+    const __dirname = path.resolve()
+    const htmlRestablecer = fs.readFileSync(path.join(__dirname,'src/config/restablecer_password_empleado.html'), 'utf8');
     const preparedHTMLPassword = prepareHTMLPasswordEmpleado(htmlRestablecer, token);
 
     let info = await transporter.sendMail({
@@ -130,7 +134,9 @@ const sendMailToRecoveryPasswordEmpleado = async(userMail,token)=>{
 
 // Función para enviar correo electrónico de recuperacion de username
 const sendMailToRecoveryUsernameEmpleado = async(username, userMail) => {
-    const htmlRecuperarUsuario = fs.readFileSync('src/config/recuperar_username_empleado.html', 'utf8');
+
+    const __dirname = path.resolve()
+    const htmlRecuperarUsuario = fs.readFileSync(path.join(__dirname,'src/config/recuperar_username_empleado.html'), 'utf8');
     const preparedHTMLUsername = prepareHTMLUsername(htmlRecuperarUsuario, username);
 
     let info = await transporter.sendMail({
