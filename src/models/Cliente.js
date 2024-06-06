@@ -26,6 +26,11 @@ const clienteSchema = new Schema({
         type:String,
         trim:true,
         default:null
+    },
+    tipodoc:{
+        type:String,
+        trim:true,
+        default:null
     }
 
 },{

@@ -6,6 +6,8 @@ import routerUsuarios from './routers/usuario_routes.js';
 import routerProductos from './routers/producto_routes.js';
 import routerClientes from './routers/cliente_routes.js';
 import routerEmpleados from './routers/empleado_routes.js';
+import routerFactura from './routers/factura_routes.js';
+import routerProforma from './routers/proforma_routes.js';
 
 
 
@@ -35,6 +37,8 @@ app.use('/api',routerUsuarios)
 app.use('/api',routerProductos)
 app.use('/api',routerClientes)
 app.use('/api',routerEmpleados)
+app.use('/api',routerFactura)
+app.use('/api',routerProforma)
 
 // Manejo de una ruta que no sea encontrada
 app.use((req,res)=>res.status(404).send("Endpoint no encontrado - 404"))
