@@ -1,87 +1,129 @@
-import PDFDocument from 'pdfkit';
+import PdfkitConstruct from 'pdfkit-construct';
 import path from 'path';
 import fs from 'fs';
-import Factura from '../models/Factura.js';
 import Cliente from '../models/Cliente.js';
+import Factura from '../models/Factura.js';
 
 export const generatePdf = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Obtener los datos de la factura desde la base de datos
     const factura = await Factura.findById(id);
     if (!factura) {
       return res.status(404).json({ msg: "Factura no encontrada" });
     }
 
-    // Obtener los datos del cliente desde la base de datos
     const cliente = await Cliente.findById(factura.id_cliente);
     if (!cliente) {
       return res.status(404).json({ msg: "Cliente no encontrado" });
     }
 
-    // Crear un nuevo documento PDF
-    const doc = new PDFDocument();
     const __dirname = path.resolve();
-    const filePath = path.join(__dirname, '..', 'invoices', `invoice_${factura.secuencial}.pdf`);
+    const logoPath = path.join(__dirname, 'src', 'public', 'INTI-KILLA-LOGO.png');
 
-    // Asegurar que el directorio de facturas exista
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    // Pipe el documento PDF a un archivo
-    doc.pipe(fs.createWriteStream(filePath));
-
-    // Agregar contenido al documento PDF
-    doc.fontSize(20).text('Factura', { align: 'center' });
-    doc.moveDown();
-
-    doc.fontSize(12).text(`Clave de Acceso: ${factura.claveAcceso}`);
-    doc.text(`Secuencial: ${factura.secuencial}`);
-    doc.text(`Fecha de Emisión: ${new Date(factura.fechaEmision).toLocaleDateString()}`);
-    doc.moveDown();
-
-    doc.fontSize(16).text('Datos del Cliente');
-    doc.fontSize(12).text(`Nombre: ${cliente.nombre}`);
-    doc.text(`Cédula: ${cliente.cedula}`);
-    doc.text(`Teléfono: ${cliente.telefono}`);
-    doc.text(`Dirección: ${cliente.direccion}`);
-    doc.text(`Email: ${cliente.email}`);
-    doc.moveDown();
-
-    doc.fontSize(16).text('Detalle de Productos');
-    factura.productos.forEach(producto => {
-      doc.fontSize(12).text(`Producto: ${producto.nombre}`);
-      doc.text(`Código: ${producto.codigo}`);
-      doc.text(`Cantidad: ${producto.cantidad}`);
-      doc.text(`Precio Unitario: ${producto.precioUnitario}`);
-      doc.text(`Total: ${(producto.precioUnitario * producto.cantidad).toFixed(2)}`);
-      doc.moveDown();
+    const doc = new PdfkitConstruct({
+      size: 'A4',
+      margins: { top: 50, left: 50, right: 50, bottom: 50 },
+      bufferPages: true,
     });
 
-    doc.fontSize(16).text('Resumen de la Factura');
-    doc.fontSize(12).text(`Total sin Impuestos: ${factura.totalSinImpuestos}`);
-    doc.text(`Descuento: ${factura.totalDescuento}`);
-    doc.text(`Total Impuesto Valor: ${factura.totalImpuestoValor}`);
-    doc.text(`Importe Total: ${factura.importeTotal}`);
-    doc.text(`Pago Total: ${factura.pagoTotal}`);
-    doc.text(`Forma de Pago: ${factura.formaPago}`);
-    doc.moveDown();
+    doc.image(logoPath, 50, 50, { width: 100 });
 
-    // Finalizar el documento PDF
+    doc.setDocumentHeader({
+      height: '35%'
+    },() => {
+      doc.fontSize(24)
+        .text("INTI KILLA", 200, 60, { bold: true })
+        .fontSize(12)
+        .text("RUC: 1708978539001", 200, 85)
+        .text("EMAIL: intikilla@gmail.com", 200, 100)
+        .text("DIRECCION: RICARDO IZURIETA E20-353 Y E20F", 200, 115);
+
+      doc.fontSize(16)
+        .text(`FACTURA: ${factura.secuencial}`, 60 , 160, { bold: true })
+        .moveDown(0.2)
+        .fontSize(12)
+        .text(`CLAVE DE ACCESO: ${factura.claveAcceso}`, { bold: true })
+        .moveDown(0.2)
+        .text(`FECHA: ${new Date(factura.fechaEmision).toLocaleDateString()}`)
+        .moveDown(1);
+
+      doc.fontSize(16)
+        .text("DATOS DEL CLIENTE", { bold: true })
+        .moveDown(0.2)
+        .fontSize(12)
+        .text(`Nombre: ${cliente.nombre}`)
+        .text(`Cédula: ${cliente.cedula}`)
+        .text(`Teléfono: ${cliente.telefono}`)
+        .text(`Dirección: ${cliente.direccion}`)
+        .text(`Email: ${cliente.email}`);
+    });
+
+    doc.addTable(
+      [
+        { key: 'codigo', label: 'CODIGO', align: 'left' },
+        { key: 'nombre', label: '                      CONCEPTO                      ', align: 'left' },
+        { key: 'cantidad', label: 'CANTIDAD', align: 'center' },
+        { key: 'precioUnitario', label: 'PRECIO UNITARIO', align: 'center' },
+        { key: 'total', label: 'TOTAL', align: 'right' }
+      ],
+      factura.productos.map(producto => ({
+        codigo: producto.codigo,
+        nombre: producto.nombre,
+        cantidad: producto.cantidad,
+        precioUnitario: producto.precioUnitario.toFixed(2),
+        total: (producto.precioUnitario * producto.cantidad).toFixed(2)
+      })),
+      {
+        cellsPadding: 10,
+        marginLeft: 20,
+        marginRight: 20,
+        headAlign: 'center',
+        width: 'fill_body',
+      }
+    );
+
+    doc.addTable(
+      [
+        { key: 'label', label: '', align: 'left' },
+        { key: 'value', label: '', align: 'right' }
+      ],
+      [
+        { label: 'Subtotal', value: `${factura.totalSinImpuestos.toFixed(2)}` },
+        { label: 'Descuento', value: `${factura.totalDescuento.toFixed(2)}` },
+        { label: 'IVA 15%', value: `${factura.totalImpuestoValor.toFixed(2)}` },
+        { label: 'Total', value: `${factura.importeTotal.toFixed(2)}` }
+      ],
+      {
+        headBackground : '#FFFFFF',
+        headColor : '#FFFFFF',
+        head: false,
+        marginLeft: 330,
+        marginRight: 20,
+        headAlign: 'center',
+        width: 'fill_body',
+        border: { size: 0.1, color: '#cdcdcd' },
+        striped: true,
+        stripedColors: ["#FFFFFF", "#FFFFFF"],
+        headFontSize: 10,
+        cellsFontSize: 9,
+        cellsAlign: 'right',
+      }
+    );
+
+    doc.render();
+
+    // Crear un buffer en lugar de un archivo en disco
+    const buffers = [];
+    doc.on('data', buffers.push.bind(buffers));
+    doc.on('end', () => {
+      const pdfData = Buffer.concat(buffers);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=factura_${factura.secuencial}.pdf`);
+      res.send(pdfData);
+    });
+
     doc.end();
-
-    // Esperar a que el archivo se haya escrito
-    doc.on('finish', () => {
-      res.download(filePath, `invoice_${factura.secuencial}.pdf`, (err) => {
-        if (err) {
-          console.error('Error al descargar el archivo:', err);
-          res.status(500).json({ message: 'Error al descargar el archivo' });
-        }
-      });
-    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error en el servidor' });

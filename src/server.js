@@ -37,8 +37,8 @@ app.use('/api',routerUsuarios)
 app.use('/api',routerProductos)
 app.use('/api',routerClientes)
 app.use('/api',routerEmpleados)
-app.use('/api',routerFactura)
 app.use('/api',routerProforma)
+app.use('/api',routerFactura)
 
 // Manejo de una ruta que no sea encontrada
 app.use((req,res)=>res.status(404).send("Endpoint no encontrado - 404"))
