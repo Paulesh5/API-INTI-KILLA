@@ -142,6 +142,14 @@ const actualizarPerfil = async (req,res)=>{
             return res.status(404).json({msg:`Lo sentimos, el correo ya se encuentra registrado`})  
         }
     }
+    if (usuarioBDD.username !=  req.body.username)
+    {
+        const usuarioBDDUsername = await Usuario.findOne({username:req.body.username})
+        if (usuarioBDDUsername)
+        {
+            return res.status(404).json({msg:`Lo sentimos, el username ya se encuentra registrado`})  
+        }
+    }
 		usuarioBDD.nombre = req.body.nombre || usuarioBDD?.nombre
     usuarioBDD.apellido = req.body.apellido  || usuarioBDD?.apellido
     usuarioBDD.email = req.body.email || usuarioBDD?.email

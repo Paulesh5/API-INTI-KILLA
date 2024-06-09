@@ -18,7 +18,7 @@ const generateAccessKey = (fecha, tipoComprobante, rucEmpresa, produccionPrueba,
   return claveAcceso + digitoVerificador;
 };
 
-export const generateInvoiceXml = async (req, res) => {
+const generateInvoiceXml = async (req, res) => {
   const ambiente = 1; // 1 para pruebas, 2 para produccion
   const iva = 15;
   const codIva = 4;
@@ -207,3 +207,20 @@ export const generateInvoiceXml = async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
+
+const listarFacturas = async (req,res)=>{
+  const facturas = await Factura.find().select("-createdAt -updatedAt -__v");
+  res.status(200).json(facturas)
+}
+const detalleFactura = async(req,res)=>{
+  const {id} = req.params
+  if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe la Factura ${id}`});
+  const factura = await Factura.findById(id).select("-createdAt -updatedAt -__v")
+  res.status(200).json(factura)
+}
+
+export {
+	listarFacturas,
+  detalleFactura,
+  generateInvoiceXml
+}

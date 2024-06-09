@@ -16,6 +16,6 @@ router.get('/proforma/:id', verificarAutenticacion, detalleProforma)
 router.post('/proforma/registro', verificarAutenticacion, registrarProforma)
 router.put('/proforma/actualizar/:id', verificarAutenticacion, actualizarProforma)
 router.delete('/proforma/eliminar/:id', verificarAutenticacion, eliminarProforma)
-router.get('/proforma/generate-pdf/:id', generatePdf);
+router.get('/proforma/generate-pdf/:id', verificarAutenticacion, generatePdf);
 
 export default router

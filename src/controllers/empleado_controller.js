@@ -126,6 +126,14 @@ const actualizarEmpleado = async (req,res)=>{
             return res.status(404).json({msg:`Lo sentimos, el correo ya se encuentra registrado`})  
         }
     }
+    if (empleadoBDD.username !=  req.body.username)
+    {
+        const empleadoBDDUsername = await Empleado.findOne({username:req.body.username})
+        if (empleadoBDDUsername)
+        {
+            return res.status(404).json({msg:`Lo sentimos, el username ya se encuentra registrado`})  
+        }
+    }
     empleadoBDD.nombre = req.body.nombre || empleadoBDD?.nombre
     empleadoBDD.apellido = req.body.apellido  || empleadoBDD?.apellido
     empleadoBDD.cedula = req.body.cedula  || empleadoBDD?.cedula
