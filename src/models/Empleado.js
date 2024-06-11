@@ -30,18 +30,18 @@ const empleadoSchema = new Schema({
     },
     email:{
         type:String,
-        trim:true,
-        default:null
+        require:true,
+        trim:true
     },
     username:{
         type:String,
-        trim:true,
-        default:null
+        require:true,
+        trim:true
     },
     password:{
         type:String,
-        trim:true,
-        default:null
+        require:true,
+        trim:true
     },
     rol:{
         type:String,

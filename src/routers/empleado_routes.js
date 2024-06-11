@@ -30,7 +30,7 @@ router.post('/empleado/registro', verificarAutenticacion, registrarEmpleado)
 
 router.get('/empleado/informacion', verificarAutenticacion, perfilEmpleado)
 
-router.put('/usuario/actualizarpassword', verificarAutenticacion, actualizarPasswordEmpleado)
+router.put('/empleado/actualizarpassword', verificarAutenticacion, actualizarPasswordEmpleado)
 
 router.get('/empleados', verificarAutenticacion, listarEmpleados)
 
@@ -38,6 +38,6 @@ router.get('/empleado/:id', verificarAutenticacion, detalleEmpleado)
 
 router.put('/empleado/actualizar/:id', verificarAutenticacion, actualizarEmpleado)
 
-router.delete('/empleado/eliminar/:id', verificarAutenticacion, eliminarEmpleado)
+router.put('/empleado/eliminar/:id', verificarAutenticacion, eliminarEmpleado)
 
 export default router
