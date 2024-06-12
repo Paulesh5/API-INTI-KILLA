@@ -34,7 +34,7 @@ const registrarProforma = async(req,res)=>{
 
     // Obtener el último secuencial de factura
     const lastProforma = await Proforma.findOne().sort({ _id: -1 }).limit(1);
-    let secuencial = lastProforma ? parseInt(lastInvoice.secuencial) + 1 : 1;
+    let secuencial = lastProforma ? parseInt(lastProforma.secuencial) + 1 : 1;
     secuencial = secuencial.toString().padStart(9, '0'); // Asegurar que tenga 9 dígitos
 
     const fechaActual = new Date();
