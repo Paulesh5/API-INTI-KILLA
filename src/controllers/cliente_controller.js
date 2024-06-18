@@ -19,6 +19,19 @@ const detalleCliente = async(req,res)=>{
     const cliente = await Cliente.findById(id).select("-createdAt -updatedAt -__v")
     res.status(200).json(cliente)
 }
+const busquedaCliente = async (req, res) => {
+    const { cedula } = req.body;
+    if (!cedula) return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+
+    try {
+        const clienteBDD = await Cliente.findOne({ cedula }).select("-createdAt -updatedAt -__v");
+        if (!clienteBDD) return res.status(400).json({ msg: "Lo sentimos, el cliente no se encuentra registrado" });
+        res.status(200).json(clienteBDD);
+    } catch (error) {
+        console.error("Error buscando cliente:", error);
+        res.status(500).json({ msg: "Error del servidor, por favor intenta de nuevo más tarde" });
+    }
+};
 const registrarCliente = async(req,res)=>{
     const {cedula} = req.body
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
@@ -48,5 +61,6 @@ export {
     detalleCliente,
     registrarCliente,
     actualizarCliente,
-    eliminarCliente
+    eliminarCliente,
+    busquedaCliente
 }
