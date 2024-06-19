@@ -29,9 +29,9 @@ router.post("/registro", verificarAutenticacion, validacionUsuario, registro)
 
 router.get("/confirmar/:token", confirmEmail);
 
-router.get("/recuperar-password", validacionEmail, recuperarPassword);
+router.post("/recuperar-password", validacionEmail, recuperarPassword);
 
-router.get("/recuperar-username", validacionEmail, recuperarUsername);
+router.post("/recuperar-username", validacionEmail, recuperarUsername);
 
 router.get("/recuperar-password/:token", comprobarTokenPasword);
 

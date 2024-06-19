@@ -15,22 +15,29 @@ import {
     eliminarEmpleado
 } from "../controllers/empleado_controller.js";
 import verificarAutenticacion from "../middlewares/autenticacion.js";
+import { 
+    validacionEmail, 
+    validacionEmpleado,
+    validacionNuevoPassword,
+    validacionLogin,
+    validacionActualizarPassword
+} from '../middlewares/validacionEmpleado.js';
 
-router.post("/empleado/login", loginEmpleado)
+router.post("/empleado/login", validacionLogin, loginEmpleado)
 
 router.get("/empleado/confirmar/:token", confirmEmailEmpleado);
 
-router.get("/empleado/recuperar-password", recuperarPasswordEmpleado);
+router.post("/empleado/recuperar-password", validacionEmail , recuperarPasswordEmpleado);
 
-router.get("/empleado/recuperar-username", recuperarUsernameEmpleado);
+router.post("/empleado/recuperar-username", validacionEmail, recuperarUsernameEmpleado);
 
-router.post("/empleado/nuevo-password", nuevoPasswordEmpleado);
+router.post("/empleado/nuevo-password", validacionNuevoPassword , nuevoPasswordEmpleado);
 
-router.post('/empleado/registro', verificarAutenticacion, registrarEmpleado)
+router.post('/empleado/registro', verificarAutenticacion, validacionEmpleado, registrarEmpleado)
 
 router.get('/empleado/informacion', verificarAutenticacion, perfilEmpleado)
 
-router.put('/empleado/actualizarpassword', verificarAutenticacion, actualizarPasswordEmpleado)
+router.put('/empleado/actualizarpassword', verificarAutenticacion, validacionActualizarPassword , actualizarPasswordEmpleado)
 
 router.get('/empleados', verificarAutenticacion, listarEmpleados)
 
