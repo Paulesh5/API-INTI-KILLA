@@ -18,7 +18,7 @@ import {
 router.get('/cliente/informacion', verificarAutenticacion, perfilCliente)
 router.get('/clientes', verificarAutenticacion, listarClientes)
 router.get('/cliente/:id', verificarAutenticacion, detalleCliente)
-router.post('/cliente/:cedula', verificarAutenticacion, busquedaCliente)
+router.post('/cliente', verificarAutenticacion, busquedaCliente)
 router.post('/cliente/registro', verificarAutenticacion, validacionCliente, registrarCliente)
 router.put('/cliente/actualizar/:id', verificarAutenticacion, actualizarCliente)
 router.delete('/cliente/eliminar/:id', verificarAutenticacion, eliminarCliente)
