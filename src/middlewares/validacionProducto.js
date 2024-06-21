@@ -19,7 +19,7 @@ const validacionProducto =[
         .customSanitizer(value => value?.trim()),
 
     check(["cantidad"])
-        .isNumeric()
+        .isNumeric({ min: 0 })
             .withMessage('El campo "cantidad" debe contener solo números')
         .customSanitizer(value => value?.trim()),
 
