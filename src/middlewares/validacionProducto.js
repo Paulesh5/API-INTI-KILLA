@@ -5,23 +5,22 @@ const validacionProducto =[
         .exists()
             .withMessage('Los campos "codigo" "nombre" "precio_unitario" y/o "cantidad" son obligatorios')
         .notEmpty()
-            .withMessage('Los campos "codigo" "nombre" "precio_unitario" y/o "cantidad" no pueden estar vacíos')
+            .withMessage('Los campos "codigo" "nombre" "precio_unitario" y/o "cantidad" no pueden estar vacíos'),
+
+    check(["nombre"])
         .customSanitizer(value => value?.trim()),
 
     check(["codigo"])
         .isNumeric()
-            .withMessage('El campo "codigo" debe contener solo números')
-        .customSanitizer(value => value?.trim()),
+            .withMessage('El campo "codigo" debe contener solo números'),
 
     check("precio_unitario")
         .isFloat({ min: 0 })
-            .withMessage('El campo "precio_unitario" debe ser un número positivo')
-        .customSanitizer(value => value?.trim()),
+            .withMessage('El campo "precio_unitario" debe ser un número positivo'),
 
     check(["cantidad"])
         .isNumeric({ min: 0 })
-            .withMessage('El campo "cantidad" debe contener solo números')
-        .customSanitizer(value => value?.trim()),
+            .withMessage('El campo "cantidad" debe contener solo números'),
 
 
     (req,res,next)=>{
