@@ -11,7 +11,7 @@ const validacionCliente =[
     check(["nombre"])
         .isLength({ min: 6, max:  30})
             .withMessage('El campo "nombre" debe tener entre 6 y 30 caracteres')
-        .isAlpha('es-ES', { ignore: 'áéíóúÁÉÍÓÚñÑ' })
+        .isAlpha('es-ES', { ignore: 'áéíóúÁÉÍÓÚñÑ ' })
             .withMessage('El campo "nombre" debe contener solo letras')
         .customSanitizer(value => value?.trim()),
 
