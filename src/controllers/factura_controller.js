@@ -170,7 +170,8 @@ const generateInvoiceXml = async (req, res) => {
 
     // Definir la ruta del archivo
     const __dirname = path.resolve();
-    const filePath = path.join(__dirname, 'src', 'public', `invoice_${secuencial}.xml`);
+    // const filePath = path.join(__dirname, 'src', 'public', `invoice_${secuencial}.xml`);
+    const filePath = path.join('/tmp', `invoice_${secuencial}.xml`);
 
     // Asegurar que el directorio de facturas exista
     const dir = path.dirname(filePath);

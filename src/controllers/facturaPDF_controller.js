@@ -239,7 +239,8 @@ const generatePdfMail = async (id) => {
 
       doc.render();
       
-      const pdfPath = path.join(__dirname, 'src', 'public', `invoice_${factura.secuencial}.pdf`);
+      // const pdfPath = path.join(__dirname, 'src', 'public', `invoice_${factura.secuencial}.pdf`);
+      const pdfPath = path.join('/tmp', `invoice_${factura.secuencial}.pdf`);
       // Crear un buffer en lugar de un archivo en disco
       const buffers = [];
       doc.on('data', buffers.push.bind(buffers));
