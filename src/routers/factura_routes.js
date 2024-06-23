@@ -1,6 +1,7 @@
 import {Router} from 'express'
 const router = Router()
-import { detalleFactura, generateInvoiceXml, listarFacturas } from '../controllers/factura_controller.js';
+import { generateInvoiceXml } from '../controllers/factura_controller.js';
+import { detalleFactura, listarFacturas } from '../controllers/facturaListar_controller.js';
 import { generatePdf } from '../controllers/facturaPDF_controller.js';
 import verificarAutenticacion from "../middlewares/autenticacion.js";
 

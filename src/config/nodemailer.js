@@ -2,6 +2,10 @@ import nodemailer from "nodemailer"
 import dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
+import { promisify } from "util"
+
+const readFileAsync = promisify(fs.readFile);
+const unlinkAsync = promisify(fs.unlink);
 
 dotenv.config()
 
@@ -148,6 +152,36 @@ const sendMailToRecoveryUsernameEmpleado = async(username, userMail) => {
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
+const sendMailFactura = async(userMail, pdfFilePath) => {
+    try {
+        // Leer el contenido del archivo PDF
+        const pdfAttachment = await fs.promises.readFile(pdfFilePath);
+
+        const mailOptions = {
+            from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
+            to: userMail,
+            subject: 'Comprobante Electrónico',
+            attachments: [
+                {
+                    filename: 'factura.pdf',
+                    content: pdfAttachment,
+                    encoding: 'base64'
+                }
+            ]
+        };
+
+        // Enviar el correo electrónico con los archivos adjuntos
+        const info = await transporter.sendMail(mailOptions);
+        console.log("Correo enviado satisfactoriamente:", info.messageId);
+
+        await unlinkAsync(pdfFilePath);
+        console.log(`Archivo PDF eliminado: ${pdfFilePath}`);
+    } catch (error) {
+        console.error("Error al enviar la factura al correo electrónico:", error);
+        throw error;
+    }   
+}
+
 
 export {
     sendMailToUser,
@@ -155,5 +189,6 @@ export {
     sendMailToRecoveryUsername,
     sendMailToEmpleado,
     sendMailToRecoveryPasswordEmpleado,
-    sendMailToRecoveryUsernameEmpleado
+    sendMailToRecoveryUsernameEmpleado,
+    sendMailFactura
 }

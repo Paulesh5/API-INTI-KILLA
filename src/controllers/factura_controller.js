@@ -1,8 +1,11 @@
 import xmlbuilder from 'xmlbuilder';
 import fs from 'fs';
 import path from 'path';
+import axios from 'axios';
+import FormData from 'form-data';
 import Cliente from "../models/Cliente.js";
 import Factura from "../models/Factura.js";
+import { enviarFactura } from './facturaListar_controller.js';
 
 // Función para generar la clave de acceso
 const generateAccessKey = (fecha, tipoComprobante, rucEmpresa, produccionPrueba, estab, ptoEmi, secuencial, idcod, tipoEmision) => {
@@ -181,46 +184,113 @@ const generateInvoiceXml = async (req, res) => {
         return res.status(500).json({ message: 'Error al guardar el archivo' });
       }
 
-      // Crear un nuevo objeto de la factura
-      const nuevaFactura = new Factura({
-        id_cliente,
-        id_empleado, // Suponiendo que tienes un middleware para autenticar al usuario y guardar su ID en req.user
-        secuencial, // Guardar solo el secuencial
-        fechaEmision: fechaActual,
-        claveAcceso,
-        productos: products,
-        totalSinImpuestos: totalSinImpuestosFixed,
-        totalDescuento: totalDescuentoFixed,
-        totalImpuestoValor: totalImpuestoValorFixed,
-        importeTotal: importeTotalFixed,
-        pagoTotal: pagoTotalFixed,
-        formaPago
+      const formData = new FormData();
+      formData.append('RucEmpresa', ruc);
+      formData.append('ClaveAcceso', claveAcceso);
+
+      
+
+      const endpointUrl = "http://paules-001-site1.etempurl.com/api/facturacion/FirmaXml";  
+
+      const username = '11182847';
+      const password = '60-dayfreetrial';
+
+      const auth = {
+        username: username,
+        password: password
+      };
+
+        try {
+
+          const fileData = await fs.promises.readFile(filePath);
+          formData.append('XmlGenerado', fileData, { filepath: filePath, contentType: 'application/xml' });
+
+          const response = await axios.post(endpointUrl, formData, {
+            auth: auth,
+            headers: {
+              ...formData.getHeaders(), 
+              'accept': 'text/plain' 
+            }
+          })
+          console.log('Respuesta del servidor (FirmaXml):', response.data);
+
+          const endpointRecepcion = `http://paules-001-site1.etempurl.com/api/facturacion/RecepcionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${ruc}`;
+
+          const responseRecepcion = await axios.get(endpointRecepcion, {
+            auth: auth,
+            headers: { 
+              'accept': 'text/plain' 
+            }
+          })
+          console.log('Respuesta del servidor (RecepcionPrueba):', responseRecepcion.data);
+
+          const endpointAutorizacion = `http://paules-001-site1.etempurl.com/api/facturacion/AutorizacionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${ruc}`;
+
+          const responseAutorizacion = await axios.get(endpointAutorizacion, {
+            auth: auth,
+            headers: {
+              'accept': 'text/plain' 
+            }
+          })
+          console.log('Respuesta del servidor (AutorizacionPrueba):', responseAutorizacion.data);
+
+          const nuevaFactura = new Factura({
+            id_cliente,
+            id_empleado,
+            secuencial, 
+            fechaEmision: fechaActual,
+            claveAcceso,
+            productos: products,
+            totalSinImpuestos: totalSinImpuestosFixed,
+            totalDescuento: totalDescuentoFixed,
+            totalImpuestoValor: totalImpuestoValorFixed,
+            importeTotal: importeTotalFixed,
+            pagoTotal: pagoTotalFixed,
+            formaPago
+          });
+
+          await nuevaFactura.save();
+
+          try {
+            await fs.promises.unlink(filePath);
+            console.log(`Archivo XML '${path.basename(filePath)}' eliminado correctamente.`);
+          } catch (error) {
+            console.error('Error al intentar eliminar el archivo XML:', error);
+          }
+
+          const mailFactura = async (req, res) => {
+            try {
+                const resultadoEnvio = await enviarFactura(email, claveAcceso);
+
+                return res.status(200).json({ message: 'Factura procesada y enviada correctamente al correo' });
+            } catch (error) {
+                console.error("Error en mailFactura:", error);
+                return res.status(500).json({ message: 'Error en el servidor al procesar la factura' });
+            }
+        };
+
+        try {
+          const resultadoEnvio = await enviarFactura(clienteBDD.email, claveAcceso);
+  
+          // Responder al cliente con el mensaje de éxito
+          return res.status(200).json({ message: 'Factura procesada y enviada correctamente al correo' });
+        } catch (error) {
+          console.error("Error en enviar factura por correo electrónico:", error);
+          return res.status(500).json({ message: 'Error en el servidor al enviar la factura por correo electrónico' });
+        }
+  
+        } catch (error) {
+          console.error('Error en la petición POST (facturacion):', error);
+          res.status(500).json({ message: 'Error en el proceso de facturacion' });
+        }
       });
-
-      // Guardar la factura en la base de datos
-      await nuevaFactura.save();
-
-      res.status(200).json({ message: 'Invoice XML generado y guardado', filePath });
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error en el servidor' });
-  }
-};
-
-const listarFacturas = async (req,res)=>{
-  const facturas = await Factura.find().select("-createdAt -updatedAt -__v");
-  res.status(200).json(facturas)
-}
-const detalleFactura = async(req,res)=>{
-  const {id} = req.params
-  if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe la Factura ${id}`});
-  const factura = await Factura.findById(id).select("-createdAt -updatedAt -__v")
-  res.status(200).json(factura)
-}
+  
+    } catch (error) {
+      console.error('Error al generar la factura:', error);
+      res.status(500).json({ message: 'Error en el servidor al generar la factura' });
+    }
+  };
 
 export {
-	listarFacturas,
-  detalleFactura,
   generateInvoiceXml
-}
+};
