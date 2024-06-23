@@ -61,12 +61,20 @@ const generateInvoiceXml = async (req, res) => {
     let secuencial = lastInvoice ? parseInt(lastInvoice.secuencial) + 1 : 1;
     secuencial = secuencial.toString().padStart(9, '0'); // Asegurar que tenga 9 dígitos
 
-    // Obtener la fecha actual en el formato requerido "ddmmaaaa"
     const fechaActual = new Date();
-    const dia = fechaActual.getDate().toString().padStart(2, '0');
-    const mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
-    const año = fechaActual.getFullYear().toString();
+    const options = { timeZone: 'America/Guayaquil' }; // Zona horaria de Quito (Ecuador)
+    const dia = fechaActual.toLocaleString('es-EC', { day: '2-digit', timeZone: 'America/Guayaquil' });
+    const mes = fechaActual.toLocaleString('es-EC', { month: '2-digit', timeZone: 'America/Guayaquil' });
+    const año = fechaActual.toLocaleString('es-EC', { year: 'numeric', timeZone: 'America/Guayaquil' });
     const fechaEmision = `${dia}${mes}${año}`; // Formato "ddmmaaaa"
+    
+    
+    // Obtener la fecha actual en el formato requerido "ddmmaaaa"
+    // const fechaActual = new Date();
+    // const dia = fechaActual.getDate().toString().padStart(2, '0');
+    // const mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+    // const año = fechaActual.getFullYear().toString();
+    // const fechaEmision = `${dia}${mes}${año}`; // Formato "ddmmaaaa"
 
     // Generate Clave de Acceso
     const randomCode = Math.floor(10000000 + Math.random() * 90000000).toString();
