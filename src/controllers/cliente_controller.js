@@ -39,7 +39,8 @@ const registrarCliente = async(req,res)=>{
     if(verificarCedulaBDD) return res.status(400).json({msg:"Lo sentimos, la cédula ya se encuentra registrada"})
     const nuevoCliente = new Cliente(req.body)
     await nuevoCliente.save()
-    res.status(200).json({msg: "Registro exitoso del Cliente", cliente: nuevoCliente})
+    const clienteBDD = await Cliente.findOne({ cedula }).select("-createdAt -updatedAt -__v");
+    res.status(200).json({msg: "Registro exitoso del Cliente", cliente: clienteBDD})
 }
 const actualizarCliente = async(req,res)=>{
     const {id} = req.params
