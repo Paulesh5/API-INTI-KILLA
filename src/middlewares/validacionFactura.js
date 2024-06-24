@@ -1,6 +1,6 @@
 import { check, validationResult } from 'express-validator'
 
-const validacionProforma =[
+const validacionFactura =[
     check("id_cliente")
         .exists().withMessage('El campo "id_cliente" es obligatorio')
         .notEmpty().withMessage('El campo "id_cliente" no puede estar vacío')
@@ -54,6 +54,16 @@ const validacionProforma =[
         .notEmpty().withMessage('El campo "importeTotal" no puede estar vacío')
         .isFloat({ min: 0 }).withMessage('El campo "importeTotal" debe ser un número decimal mayor o igual a 0'),
 
+    check("pagoTotal")
+        .exists().withMessage('El campo "pagoTotal" es obligatorio')
+        .notEmpty().withMessage('El campo "pagoTotal" no puede estar vacío')
+        .isFloat({ min: 0 }).withMessage('El campo "pagoTotal" debe ser un número decimal mayor o igual a 0'),
+
+    check("formaPago")
+        .exists().withMessage('El campo "formaPago" es obligatorio')
+        .notEmpty().withMessage('El campo "formaPago" no puede estar vacío')
+        .isString().withMessage('El campo "formaPago" debe ser una cadena de texto'),
+
 
     (req,res,next)=>{
         const errors = validationResult(req);
@@ -66,5 +76,5 @@ const validacionProforma =[
 ]
 
 export {
-    validacionProforma
+    validacionFactura
 }
