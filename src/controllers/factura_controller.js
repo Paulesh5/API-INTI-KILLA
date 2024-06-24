@@ -223,6 +223,23 @@ const generateInvoiceXml = async (req, res) => {
           })
           console.log('Respuesta del servidor (FirmaXml):', response.data);
 
+          const nuevaFactura = new Factura({
+            id_cliente,
+            id_empleado,
+            secuencial, 
+            fechaEmision: fechaActual,
+            claveAcceso,
+            productos: products,
+            totalSinImpuestos: totalSinImpuestosFixed,
+            totalDescuento: totalDescuentoFixed,
+            totalImpuestoValor: totalImpuestoValorFixed,
+            importeTotal: importeTotalFixed,
+            pagoTotal: pagoTotalFixed,
+            formaPago
+          });
+
+          await nuevaFactura.save();
+
           const endpointRecepcion = `http://paules-001-site1.etempurl.com/api/facturacion/RecepcionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${ruc}`;
 
           const responseRecepcion = await axios.get(endpointRecepcion, {
@@ -243,22 +260,6 @@ const generateInvoiceXml = async (req, res) => {
           })
           console.log('Respuesta del servidor (AutorizacionPrueba):', responseAutorizacion.data);
 
-          const nuevaFactura = new Factura({
-            id_cliente,
-            id_empleado,
-            secuencial, 
-            fechaEmision: fechaActual,
-            claveAcceso,
-            productos: products,
-            totalSinImpuestos: totalSinImpuestosFixed,
-            totalDescuento: totalDescuentoFixed,
-            totalImpuestoValor: totalImpuestoValorFixed,
-            importeTotal: importeTotalFixed,
-            pagoTotal: pagoTotalFixed,
-            formaPago
-          });
-
-          await nuevaFactura.save();
 
           try {
             await fs.promises.unlink(filePath);
