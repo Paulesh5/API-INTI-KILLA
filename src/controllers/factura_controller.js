@@ -345,10 +345,10 @@ const recepcionSRI = async(req,res)=>{
     const responseRecepcion = await axios.get(endpointRecepcion, {
       auth: auth,
       headers: { 
-        'accept': 'text/plain' 
+        'accept': 'application/json'
       }
     })
-    
+
     const mensaje = `Respuesta del servidor (RecepcionPrueba): ${JSON.stringify(responseRecepcion.data)}`;
     console.log(mensaje);
     res.status(200).json({mensaje})
