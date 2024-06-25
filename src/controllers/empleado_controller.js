@@ -31,7 +31,7 @@ const perfilEmpleado =(req,res)=>{
     res.status(200).json(req.empleadoBDD)
 }
 const listarEmpleados = async (req,res)=>{
-    const empleados = await Empleado.find({estado:true}).where('empleado').equals(req.empleadoBDD).select("-createdAt -updatedAt -__v").populate('_id nombre apellido cedula telefono direccion email usuario password token')
+    const empleados = await Empleado.find({status:true}).select("-createdAt -updatedAt -__v")
     res.status(200).json(empleados)
 }
 const detalleEmpleado = async(req,res)=>{
