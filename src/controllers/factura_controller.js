@@ -279,7 +279,7 @@ const generateInvoiceXml = async (req, res) => {
                 return res.status(200).json({ message: 'Factura procesada y enviada correctamente al correo', factura: facturaBDD});
             } catch (error) {
                 console.error("Error en mailFactura:", error);
-                return res.status(500).json({ message: 'Error al enviar la factura', factura: facturaBDD});
+                return res.status(500).json({ message: 'Factura procesada pero error al enviar la factura al correo', factura: facturaBDD});
             }
         };
 
