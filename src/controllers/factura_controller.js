@@ -340,7 +340,8 @@ const recepcionSRI = async(req,res)=>{
   const {claveAcceso} = req.body
   if (!claveAcceso) return res.status(400).json({ msg: "Lo sentimos, debes enviar la clave de Acceso" });
 
-  const endpointRecepcion = `http://paules-001-site1.etempurl.com/api/facturacion/RecepcionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${rucEmpresa}`;
+  try {
+    const endpointRecepcion = `http://paules-001-site1.etempurl.com/api/facturacion/RecepcionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${rucEmpresa}`;
 
     const responseRecepcion = await axios.get(endpointRecepcion, {
       auth: auth,
@@ -352,6 +353,17 @@ const recepcionSRI = async(req,res)=>{
     const mensaje = `Respuesta del servidor (RecepcionPrueba): ${JSON.stringify(responseRecepcion.data)}`;
     console.log(mensaje);
     res.status(200).json({mensaje})
+  } catch (error) {
+    const errorMsg = error.response
+      ? error.response.data
+      : error.message;
+
+    const mensaje = `Error en RecepcionPrueba: ${errorMsg}`;
+    console.error(mensaje);
+
+    // Responder siempre con 200 aunque haya un error
+    res.status(200).json({ mensaje });
+  }
 }
 
 const autorizacionSRI = async(req,res)=>{
