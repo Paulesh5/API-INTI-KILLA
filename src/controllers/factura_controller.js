@@ -275,22 +275,37 @@ const generateInvoiceXml = async (req, res) => {
           const mailFactura = async (req, res) => {
             try {
                 const resultadoEnvio = await enviarFactura(email, claveAcceso, filePath);
+
+                try {
+                  await fs.promises.unlink(filePath);
+                  console.log(`Archivo XML '${path.basename(filePath)}' eliminado correctamente.`);
+                } catch (error) {
+                  console.error('Error al intentar eliminar el archivo XML:', error);
+                }
                 
                 return res.status(200).json({ message: 'Factura procesada y enviada correctamente al correo', factura: facturaBDD});
             } catch (error) {
                 console.error("Error en mailFactura:", error);
+
+                try {
+                  await fs.promises.unlink(filePath);
+                  console.log(`Archivo XML '${path.basename(filePath)}' eliminado correctamente.`);
+                } catch (error) {
+                  console.error('Error al intentar eliminar el archivo XML:', error);
+                }
+
                 return res.status(500).json({ message: 'Factura procesada pero error al enviar la factura al correo', factura: facturaBDD});
             }
         };
 
         mailFactura(req, res);
 
-        try {
-          await fs.promises.unlink(filePath);
-          console.log(`Archivo XML '${path.basename(filePath)}' eliminado correctamente.`);
-        } catch (error) {
-          console.error('Error al intentar eliminar el archivo XML:', error);
-        }
+        // try {
+        //   await fs.promises.unlink(filePath);
+        //   console.log(`Archivo XML '${path.basename(filePath)}' eliminado correctamente.`);
+        // } catch (error) {
+        //   console.error('Error al intentar eliminar el archivo XML:', error);
+        // }
 
         // try {
         //   const resultadoEnvio = await enviarFactura(clienteBDD.email, claveAcceso);
