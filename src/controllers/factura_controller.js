@@ -358,7 +358,7 @@ const recepcionSRI = async(req,res)=>{
       ? error.response.data
       : error.message;
 
-    const mensaje = `Error en RecepcionPrueba: ${errorMsg}`;
+    const mensaje = `Error en RecepcionPrueba: ${JSON.stringify(errorMsg)}`;
     console.error(mensaje);
 
     // Responder siempre con 200 aunque haya un error
