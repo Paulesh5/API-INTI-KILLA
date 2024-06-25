@@ -152,10 +152,13 @@ const sendMailToRecoveryUsernameEmpleado = async(username, userMail) => {
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
-const sendMailFactura = async(userMail, pdfFilePath) => {
+const sendMailFactura = async(userMail, pdfFilePath, filePath) => {
     try {
         // Leer el contenido del archivo PDF
         const pdfAttachment = await fs.promises.readFile(pdfFilePath);
+
+        // Leer el contenido del archivo XML
+        const xmlAttachment = await fs.promises.readFile(filePath);
 
         const mailOptions = {
             from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
@@ -165,6 +168,11 @@ const sendMailFactura = async(userMail, pdfFilePath) => {
                 {
                     filename: 'factura.pdf',
                     content: pdfAttachment,
+                    encoding: 'base64'
+                },
+                {
+                    filename: 'factura.xml',
+                    content: xmlAttachment,
                     encoding: 'base64'
                 }
             ]
