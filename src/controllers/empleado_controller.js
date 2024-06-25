@@ -8,6 +8,7 @@ const loginEmpleado = async(req,res)=>{
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
     const empleadoBDD = await Empleado.findOne({username}).select("-status -__v -token -updatedAt -createdAt")
     if(empleadoBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
+    if(empleadoBDD?.status===false) return res.status(402).json({msg:"Lo sentimos, pero su usuario no se encuantra activado"})
     if(!empleadoBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
     const verificarPassword = await empleadoBDD.matchPassword(password)
     if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
@@ -158,7 +159,7 @@ const eliminarEmpleado = async (req,res)=>{
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el Empleado ${id}`})
     const {salida} = req.body
-    await Empleado.findByIdAndUpdate(req.params.id,{salida:Date.parse(salida),estado:false});
+    await Empleado.findByIdAndUpdate(req.params.id,{salida:Date.parse(salida),status:false});
     res.status(200).json({msg:"Fecha de salida del Empleado registrado exitosamente"})
 }
 
