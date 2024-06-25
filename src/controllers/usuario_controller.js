@@ -8,6 +8,7 @@ const login = async(req,res)=>{
     if (Object.values(req.body).includes("")) return res.status(404).json({msg:"Lo sentimos, debes llenar todos los campos"})
     const usuarioBDD = await Usuario.findOne({username}).select("-status -__v -token -updatedAt -createdAt")
     if(usuarioBDD?.confirmEmail===false) return res.status(403).json({msg:"Lo sentimos, debe verificar su cuenta"})
+    if(usuarioBDD?.status===false) return res.status(402).json({msg:"Lo sentimos, pero su usuario no se encuantra activado"})
     if(!usuarioBDD) return res.status(404).json({msg:"Lo sentimos, el usuario no se encuentra registrado"})
     const verificarPassword = await usuarioBDD.matchPassword(password)
     if(!verificarPassword) return res.status(404).json({msg:"Lo sentimos, el password no es el correcto"})
