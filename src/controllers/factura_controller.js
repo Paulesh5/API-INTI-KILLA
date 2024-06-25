@@ -339,9 +339,8 @@ const recepcionSRI = async(req,res)=>{
   };
   const {claveAcceso} = req.body
   if (!claveAcceso) return res.status(400).json({ msg: "Lo sentimos, debes enviar la clave de Acceso" });
-  
-  try {
-    const endpointRecepcion = `http://paules-001-site1.etempurl.com/api/facturacion/RecepcionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${rucEmpresa}`;
+
+  const endpointRecepcion = `http://paules-001-site1.etempurl.com/api/facturacion/RecepcionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${rucEmpresa}`;
 
     const responseRecepcion = await axios.get(endpointRecepcion, {
       auth: auth,
@@ -349,12 +348,10 @@ const recepcionSRI = async(req,res)=>{
         'accept': 'text/plain' 
       }
     })
-    const mensaje = `Respuesta del servidor (RecepcionPrueba): ${responseRecepcion.data}`
+    
+    const mensaje = `Respuesta del servidor (RecepcionPrueba): ${JSON.stringify(responseRecepcion.data)}`;
     console.log(mensaje);
     res.status(200).json({mensaje})
-  } catch (error) {
-    res.status(500).json({msg: "Fallo en la recepción de la factura"})
-  }  
 }
 
 const autorizacionSRI = async(req,res)=>{
@@ -368,9 +365,8 @@ const autorizacionSRI = async(req,res)=>{
 
   const {claveAcceso} = req.body
   if (!claveAcceso) return res.status(400).json({ msg: "Lo sentimos, debes enviar la clave de Acceso" });
-
-  try {
-    const endpointAutorizacion = `http://paules-001-site1.etempurl.com/api/facturacion/AutorizacionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${rucEmpresa}`;
+    
+  const endpointAutorizacion = `http://paules-001-site1.etempurl.com/api/facturacion/AutorizacionPrueba?ClaveAcceso=${claveAcceso}&RucEmpresa=${rucEmpresa}`;
 
     const responseAutorizacion = await axios.get(endpointAutorizacion, {
       auth: auth,
@@ -378,12 +374,10 @@ const autorizacionSRI = async(req,res)=>{
         'accept': 'text/plain' 
       }
     })
-    const mensaje = `Respuesta del servidor (AutorizacionPrueba): ${responseAutorizacion.data}`
+
+    const mensaje = `Respuesta del servidor (AutorizacionPrueba): ${JSON.stringify(responseAutorizacion.data)}`;
     console.log(mensaje);
     res.status(200).json({mensaje})
-  } catch (error) {
-    res.status(500).json({msg: "Fallo en la autorización de la factura"})
-  }  
 }
 
 export {
