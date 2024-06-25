@@ -283,6 +283,8 @@ const generateInvoiceXml = async (req, res) => {
             }
         };
 
+        mailFactura(req, res);
+
         try {
           await fs.promises.unlink(filePath);
           console.log(`Archivo XML '${path.basename(filePath)}' eliminado correctamente.`);
