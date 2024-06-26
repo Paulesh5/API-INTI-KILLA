@@ -1,4 +1,6 @@
 import Cliente from "../models/Cliente.js"
+import Factura from "../models/Factura.js"
+import Proforma from "../models/Proforma.js"
 import mongoose from "mongoose"
 
 const perfilCliente =(req,res)=>{
@@ -52,6 +54,14 @@ const actualizarCliente = async(req,res)=>{
 const eliminarCliente = async (req,res)=>{
     const {id} = req.params
     if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el Cliente ${id}`})
+    const facturas = await Factura.find({ id_cliente:id })
+    if (facturas.length > 0) {
+        return res.status(404).json({ msg: "No se puede eliminar el cliente porque está registrado en una factura" });
+    }
+    const proformas = await Proforma.find({ id_cliente:id })
+    if (proformas.length > 0) {
+        return res.status(404).json({ msg: "No se puede eliminar el cliente porque está registrado en una proforma" });
+    }
     await Cliente.findByIdAndDelete(id);
     res.status(200).json({msg:"Cliente eliminado exitosamente"})
 }
