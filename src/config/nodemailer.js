@@ -32,6 +32,12 @@ const prepareHTMLPasswordEmpleado = (htmlContent, token) => {
 const prepareHTMLUsername = (htmlContent, username) => {
     return htmlContent.replace('${username}', username);
 };
+const prepareHTMLFactura = (htmlContent, nombre, secuencial, fechaEmision) => {
+    return htmlContent
+    .replace(/\${nombre}/g, nombre)
+    .replace(/\${secuencial}/g, secuencial)
+    .replace(/\${fechaEmision}/g, fechaEmision);
+};
 
 let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -152,7 +158,20 @@ const sendMailToRecoveryUsernameEmpleado = async(username, userMail) => {
     console.log("Mensaje enviado satisfactoriamente: ", info.messageId);
 }
 
-const sendMailFactura = async(userMail, pdfFilePath, filePath) => {
+const sendMailFactura = async(nombre, userMail, secuencial, pdfFilePath, filePath) => {
+
+    const fechaActual = new Date();
+    const options = { timeZone: 'America/Guayaquil' }; // Zona horaria de Quito (Ecuador)
+    const dia = fechaActual.toLocaleString('es-EC', { day: '2-digit', timeZone: 'America/Guayaquil' });
+    const mes = fechaActual.toLocaleString('es-EC', { month: '2-digit', timeZone: 'America/Guayaquil' });
+    const año = fechaActual.toLocaleString('es-EC', { year: 'numeric', timeZone: 'America/Guayaquil' });
+    const fechaEmision = `${dia}/${mes}/${año}`; // Formato "ddmmaaaa"
+
+    const __dirname = path.resolve()
+    const htmlenviarFactura = fs.readFileSync(path.join(__dirname,'src/config/factura.html'), 'utf8');
+    const preparedHTMLFactura = prepareHTMLFactura(htmlenviarFactura, nombre, secuencial, fechaEmision);
+
+
     try {
         // Leer el contenido del archivo PDF
         const pdfAttachment = await fs.promises.readFile(pdfFilePath);
@@ -164,6 +183,7 @@ const sendMailFactura = async(userMail, pdfFilePath, filePath) => {
             from: `INTI-KILLA ${process.env.USER_MAILTRAP}`,
             to: userMail,
             subject: 'Comprobante Electrónico',
+            html: preparedHTMLFactura,
             attachments: [
                 {
                     filename: 'factura.pdf',

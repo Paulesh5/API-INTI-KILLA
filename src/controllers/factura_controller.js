@@ -274,7 +274,7 @@ const generateInvoiceXml = async (req, res) => {
 
           const mailFactura = async (req, res) => {
             try {
-                const resultadoEnvio = await enviarFactura(email, claveAcceso, filePath);
+                const resultadoEnvio = await enviarFactura(nombre, email, secuencial, claveAcceso, filePath);
 
                 try {
                   await fs.promises.unlink(filePath);
