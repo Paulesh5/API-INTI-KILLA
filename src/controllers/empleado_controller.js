@@ -36,8 +36,8 @@ const listarEmpleados = async (req,res)=>{
 }
 const detalleEmpleado = async(req,res)=>{
     const {id} = req.params
-    if( !mongoose.Types.ObjectId.isValid(id) ) return res.status(404).json({msg:`Lo sentimos, no existe el Empleado ${id}`});
-    const empleado = await Empleado.findById(id).select("-createdAt -updatedAt -__v").populate('_id nombre apellido cedula telefono direccion email usuario password token')
+    const empleado = await Empleado.findById(id).select("-createdAt -updatedAt -__v").populate('_id nombre apellido cedula telefono direccion email username status confirmEmail')
+    if(!empleado) return res.status(404).json({msg:`Lo sentimos, no existe el Empleado ${id}`})
     res.status(200).json(empleado)
 }
 const registrarEmpleado = async(req,res)=>{
