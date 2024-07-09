@@ -35,10 +35,12 @@ const busquedaCliente = async (req, res) => {
     }
 };
 const registrarCliente = async(req,res)=>{
-    const {cedula} = req.body
+    const {cedula, email} = req.body
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
     const verificarCedulaBDD = await Cliente.findOne({cedula})
     if(verificarCedulaBDD) return res.status(400).json({msg:"Lo sentimos, la cédula ya se encuentra registrada"})
+    const verificarCorreoBDD = await Cliente.findOne({email})
+    if(verificarCorreoBDD) return res.status(400).json({msg:"Lo sentimos, el correo ya se encuentra registrado"})
     const nuevoCliente = new Cliente(req.body)
     await nuevoCliente.save()
     const clienteBDD = await Cliente.findOne({ cedula }).select("-createdAt -updatedAt -__v");
