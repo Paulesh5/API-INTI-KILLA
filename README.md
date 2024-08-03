@@ -2,6 +2,12 @@
 
 ## DESARROLLO DE UN BACKEND 
 
+## LINK DOCUMENTO DE TESIS
+https://mega.nz/file/9RFVGBrY#nLiYABI9YDAc25d1TmWwP-_-HvBkU8q7d1mSV08tbaI
+
+## LINK FORMULARIO F_AA_233
+https://mega.nz/file/kU9i3QQD#Ac5glXRJ1x3m1kDhsdcy8puL66JOheum2robn4StPUo
+
 ## LINK DEPLOY
 https://api-inti-killa.vercel.app/
 
